@@ -3,16 +3,21 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 ApiKey.Generate();
-var pythonProcess = new PythonLogger();
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<AppDbContext>(options => {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("SqlConStr"));
-    options.UseLowerCaseNamingConvention();
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString("Docker"));
+        options.UseLowerCaseNamingConvention();
     });
+}
 
 var app = builder.Build();
+
+var pythonProcess = new PythonLogger();
 app.UseHttpsRedirection();
 
 app.MapControllers();
