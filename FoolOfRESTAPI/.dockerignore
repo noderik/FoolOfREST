@@ -1,0 +1,4 @@
+obj/
+bin/
+TelegramLogger/.venv/
+TelegramLogger/__pycache__/
