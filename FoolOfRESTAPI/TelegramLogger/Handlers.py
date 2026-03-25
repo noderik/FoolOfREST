@@ -13,7 +13,7 @@ async def message_sent(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     user = message.from_user    
     if user == None:
         return
-    print(f"\033[1;33m{user.name}\033[0m: {message.text} ({message.date.now().strftime("%Y-%m-%d %H:%M:%S%z")})")
+    print(f"\033[1;33m{user.name}\033[0m: {message.text} ({message.date.now().strftime('%Y-%m-%d %H:%M:%S%z')})")
     conn: Connection = context.bot_data["database"]
     try:
         Database.writeMessage(conn, message)

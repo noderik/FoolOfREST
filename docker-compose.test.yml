@@ -1,16 +1,16 @@
 services:
-  db:
+  testdb:
     image: postgres:16
     environment:
       POSTGRES_DB: logger
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: testdb
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - devpgdata:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5431:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d logger"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d logger"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -19,12 +19,12 @@ services:
     build:
       context: ./FoolOfRESTAPI
     environment:
-      - POSTGRES_CONNECTION_STRING=${POSTGRES_CONNECTION_STRING}
-      - APIKEY=${APIKEY}
+      - POSTGRES_CONNECTION_STRING=Host=testdb;Port=5432;Database=logger;Username=postgres;Password=testdb
+      - APIKEY=testkey
       - TOKEN=${TOKEN}
-      - CONNECTION_STRING=${CONNECTION_STRING}
+      - CONNECTION_STRING=host=testdb port=5432 dbname=logger user=postgres password=testdb
     depends_on:
-      db:
+      testdb:
         condition: service_healthy
     ports:
       - "5001:5001"
@@ -34,11 +34,11 @@ services:
       context: ./FoolOfRESTWeb
     environment:
       - API_URL=http://api:5001/
-      - APIKEY=${APIKEY}
+      - APIKEY=testkey
     depends_on:
       - api
     ports:
-      - "5002:5002"
+      - "8080:8080"
 
 volumes:
-  pgdata:
+  devpgdata:
